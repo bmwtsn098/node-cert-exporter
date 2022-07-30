@@ -1,5 +1,5 @@
 # Build Stage:
-FROM golang:1.18
+FROM golang:1.18 as builder
 
 ## Install build dependencies.
 RUN apt-get update && \
@@ -13,3 +13,7 @@ WORKDIR /node-cert-exporter
 RUN go mod tidy
 RUN make
 WORKDIR bin
+
+# Package Stage
+FROM debian:bookworm-slim
+COPY --from=builder /node-cert-exporter/bin/node-cert-exporter /
